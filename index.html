@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>webre Dashboard</title>
+    <title>Dashboard - webre.co</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,60 +17,90 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #fff;
-            color: #1a1a1a;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0f172a;
+            color: #fff;
+            min-height: 100vh;
             padding-bottom: 80px;
         }
 
-        /* Header */
         .header {
-            background: #fff;
-            padding: 20px;
-            border-bottom: 1px solid #e5e5e5;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 1.5rem;
+            border-bottom: 1px solid #334155;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .header h1 {
-            font-size: 24px;
-            font-weight: 800;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        /* Tabs */
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #3b82f6;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .header-stat {
+            text-align: right;
+        }
+
+        .header-stat-label {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
         .tabs {
             display: flex;
-            background: #fff;
-            border-bottom: 1px solid #e5e5e5;
-            position: sticky;
-            top: 61px;
-            z-index: 99;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #1e293b;
+            padding: 0.5rem;
+            border-radius: 12px;
         }
 
         .tab {
             flex: 1;
-            padding: 16px;
-            text-align: center;
-            font-weight: 600;
-            color: #999;
+            padding: 0.75rem 1rem;
+            background: transparent;
             border: none;
-            background: none;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
+            border-radius: 8px;
             transition: all 0.2s;
         }
 
         .tab.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
-        }
-
-        /* Content */
-        .content {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
+            background: #3b82f6;
+            color: #fff;
         }
 
         .tab-content {
@@ -78,582 +111,818 @@
             display: block;
         }
 
-        /* Dashboard */
-        .input-group {
-            margin-bottom: 24px;
+        /* Calls Tab */
+        .upcoming-calls {
+            margin-bottom: 2rem;
         }
 
-        .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #666;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
         }
 
-        .input-group input {
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            border: 1px solid #e5e5e5;
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .call-card {
+            background: #1e293b;
+            border: 1px solid #334155;
             border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .call-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .call-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .call-time {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .call-date {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        .call-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .stat-card {
-            background: #f0f7ff;
-            padding: 20px;
+        .badge-upcoming {
+            background: #1e40af;
+            color: #93c5fd;
+        }
+
+        .badge-today {
+            background: #166534;
+            color: #86efac;
+        }
+
+        .call-info {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .call-info-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        .call-info-label {
+            color: #64748b;
+            margin-right: 0.5rem;
+            min-width: 70px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid #334155;
             border-radius: 16px;
-            margin-bottom: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
         }
 
-        .stat-card .label {
-            font-size: 14px;
-            color: #666;
-            font-weight: 600;
-            margin-bottom: 8px;
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: 800;
-            color: #2563eb;
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
         }
 
-        .revenue-card {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 24px;
+        .modal-close {
+            float: right;
+            font-size: 1.75rem;
+            font-weight: 700;
             color: #fff;
-            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
         }
 
-        .revenue-card .label {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            opacity: 0.9;
-        }
-
-        .revenue-card .value {
-            font-size: 48px;
+        .modal-title {
+            font-size: 1.5rem;
             font-weight: 800;
+            color: #fff;
+            margin-top: 0.5rem;
         }
 
-        .button-group {
+        .modal-subtitle {
+            color: #bfdbfe;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-info-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .modal-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+
+        .modal-info-label {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .modal-info-value {
+            color: #f1f5f9;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .modal-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
         }
 
         .btn {
-            padding: 16px;
+            padding: 0.85rem;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 8px;
             font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .btn-primary {
-            background: #2563eb;
+            background: #10b981;
             color: #fff;
         }
 
-        .btn-primary:active {
-            transform: scale(0.98);
+        .btn-primary:hover {
+            background: #059669;
         }
 
         .btn-secondary {
-            background: #f3f4f6;
-            color: #666;
+            background: #334155;
+            color: #cbd5e1;
         }
 
-        .toggle-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            background: #f3f4f6;
-            padding: 4px;
-            border-radius: 12px;
+        .btn-secondary:hover {
+            background: #475569;
         }
 
-        .toggle-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            border-radius: 8px;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
+        .btn-danger {
+            background: #dc2626;
+            color: #fff;
         }
 
-        .toggle-btn.active {
-            background: #fff;
-            color: #2563eb;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .btn-danger:hover {
+            background: #b91c1c;
         }
 
-        /* Calls */
-        .call-card {
-            background: #fff;
-            border: 1px solid #e5e5e5;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .call-card.today {
-            border-color: #2563eb;
-            background: #f0f7ff;
-        }
-
-        .call-card .time {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 8px;
-        }
-
-        .call-card .company {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .call-card .phone {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 12px;
-        }
-
-        .call-card .actions {
+        /* Stats Tab */
+        .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .btn-call {
-            background: #2563eb;
-            color: #fff;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.25rem;
         }
 
-        .btn-mark {
-            background: #10b981;
-            color: #fff;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .btn-mark.called {
-            background: #6b7280;
-        }
-
-        .section-header {
-            font-size: 14px;
-            font-weight: 700;
-            color: #666;
-            margin: 24px 0 12px 0;
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #3b82f6;
+        }
+
+        .stat-subtitle {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .chart-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Calculator Tab */
+        .calculator-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .calculator-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.85rem;
+            background: #0f172a;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #bfdbfe;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .result-subtitle {
+            font-size: 0.95rem;
+            color: #dbeafe;
+            margin-top: 0.5rem;
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #999;
+            padding: 3rem 1rem;
+            color: #64748b;
         }
 
         .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .stat-box {
-            background: #fff;
-            border: 1px solid #e5e5e5;
-            border-radius: 16px;
-            padding: 20px;
-        }
-
-        .stat-box .label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .stat-box .value {
-            font-size: 28px;
-            font-weight: 800;
-            color: #1a1a1a;
-        }
-
-        .stat-box .subtext {
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        @media (min-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
+        @media (max-width: 768px) {
+            .header-stats {
+                display: none;
             }
 
-            .content {
-                padding: 32px;
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-actions {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>webre.co</h1>
+        <div class="header-content">
+            <div class="logo">webre.co</div>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-label">Close Rate</div>
+                    <div class="header-stat-value" id="headerCloseRate">0%</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-label">Revenue</div>
+                    <div class="header-stat-value" id="headerRevenue">$0</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
-        <button class="tab" onclick="switchTab('calls')">Calls</button>
-        <button class="tab" onclick="switchTab('stats')">Stats</button>
-    </div>
-
-    <div class="content">
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content active">
-            <div class="input-group">
-                <label>Emails per Day</label>
-                <input type="number" id="emailsPerDay" value="250" oninput="updateDashboard()">
-            </div>
-
-            <div class="stat-card">
-                <div class="label">Days Until Next Sale</div>
-                <div class="value" id="daysToSale">2.0</div>
-            </div>
-
-            <div class="revenue-card">
-                <div class="label">Total Revenue</div>
-                <div class="value" id="totalRevenue">$0</div>
-            </div>
-
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="addSale()">+ Sale ($2,500)</button>
-                <button class="btn btn-secondary" onclick="undoSale()">Undo</button>
-            </div>
-
-            <div class="toggle-group">
-                <button class="toggle-btn active" id="weeklyBtn" onclick="setChartView('weekly')">Weekly</button>
-                <button class="toggle-btn" id="monthlyBtn" onclick="setChartView('monthly')">Monthly</button>
-            </div>
-
-            <canvas id="revenueChart"></canvas>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" data-tab="calls">📞 Calls</button>
+            <button class="tab" data-tab="stats">📊 Stats</button>
+            <button class="tab" data-tab="calculator">🧮 Calculator</button>
         </div>
 
         <!-- Calls Tab -->
-        <div id="calls" class="tab-content">
-            <div id="callsContainer">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📞</div>
-                    <div>Loading calls...</div>
-                </div>
+        <div class="tab-content active" id="calls-content">
+            <div class="section-header">
+                <h2 class="section-title">Upcoming Calls</h2>
             </div>
+            <div id="callsList"></div>
         </div>
 
         <!-- Stats Tab -->
-        <div id="stats" class="tab-content">
+        <div class="tab-content" id="stats-content">
             <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="label">Calls Booked</div>
-                    <div class="value" id="callsBooked">0</div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Calls</div>
+                    <div class="stat-value" id="totalCalls">0</div>
                 </div>
-                <div class="stat-box">
-                    <div class="label">Calls Taken</div>
-                    <div class="value" id="callsTaken">0</div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Sales</div>
+                    <div class="stat-value" id="totalSales">0</div>
+                    <div class="stat-subtitle" id="salesRevenue">$0 revenue</div>
                 </div>
-                <div class="stat-box">
-                    <div class="label">Total Sales</div>
-                    <div class="value" id="totalSales">0</div>
+                <div class="stat-card">
+                    <div class="stat-label">Close Rate</div>
+                    <div class="stat-value" id="closeRate">0%</div>
+                    <div class="stat-subtitle" id="closeRateDesc">0 of 0 calls</div>
                 </div>
-                <div class="stat-box">
-                    <div class="label">Sales Rate</div>
-                    <div class="value" id="salesRate">0%</div>
-                    <div class="subtext">Sales ÷ Calls Taken</div>
+                <div class="stat-card">
+                    <div class="stat-label">Avg Revenue/Sale</div>
+                    <div class="stat-value" id="avgRevenue">$2,500</div>
                 </div>
-                <div class="stat-box">
-                    <div class="label">Total Revenue</div>
-                    <div class="value" id="statsRevenue">$0</div>
+            </div>
+
+            <div class="chart-card">
+                <h3 class="chart-title">Sales Over Time</h3>
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h3 class="chart-title">Calls vs Sales</h3>
+                <canvas id="conversionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Calculator Tab -->
+        <div class="tab-content" id="calculator-content">
+            <div class="calculator-card">
+                <h2 class="calculator-title">Email Campaign Calculator</h2>
+                <p style="color: #94a3b8; margin-bottom: 2rem;">Based on 1 sale per 700 emails</p>
+
+                <div class="input-group">
+                    <label class="input-label">Emails Per Day</label>
+                    <input type="number" class="input" id="emailsPerDay" value="100" min="1">
                 </div>
-                <div class="stat-box">
-                    <div class="label">Avg per Call</div>
-                    <div class="value" id="avgPerCall">$0</div>
-                    <div class="subtext">Revenue ÷ Calls Taken</div>
+
+                <div class="result-card">
+                    <div class="result-label">Days Until Next Sale</div>
+                    <div class="result-value" id="daysPerSale">7</div>
+                    <div class="result-subtitle" id="salesPerMonth">~4.3 sales/month</div>
+                </div>
+            </div>
+
+            <div class="calculator-card">
+                <h2 class="calculator-title">Revenue Projections</h2>
+                
+                <div style="background: #0f172a; padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <span style="color: #94a3b8;">Sales/Month:</span>
+                        <span style="color: #3b82f6; font-weight: 700;" id="projSalesMonth">0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <span style="color: #94a3b8;">Revenue/Month:</span>
+                        <span style="color: #10b981; font-weight: 700; font-size: 1.25rem;" id="projRevenueMonth">$0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #94a3b8;">Revenue/Year:</span>
+                        <span style="color: #10b981; font-weight: 700; font-size: 1.25rem;" id="projRevenueYear">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Detail Modal -->
+    <div id="callModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" id="closeModal">&times;</button>
+                <h3 class="modal-title" id="modalCompany"></h3>
+                <p class="modal-subtitle" id="modalDateTime"></p>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h4 class="modal-section-title">Contact Information</h4>
+                    <div class="modal-info-grid">
+                        <div class="modal-info-item">
+                            <span class="modal-info-label">Email:</span>
+                            <span class="modal-info-value" id="modalEmail"></span>
+                        </div>
+                        <div class="modal-info-item">
+                            <span class="modal-info-label">Phone:</span>
+                            <span class="modal-info-value" id="modalPhone"></span>
+                        </div>
+                        <div class="modal-info-item" id="modalWebsiteContainer" style="display: none;">
+                            <span class="modal-info-label">Website:</span>
+                            <span class="modal-info-value" id="modalWebsite"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="markSaleBtn">✓ Mark Sale ($2,500)</button>
+                    <button class="btn btn-secondary" id="markNoSaleBtn">✗ No Sale</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize Supabase
         const { createClient } = supabase;
         const supabaseClient = createClient(
             'https://nhvmmhxvktmelhquckia.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5odm1taHh2a3RtZWxocXVja2lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3MzY1MzEsImV4cCI6MjA4NTMxMjUzMX0.9yilT3U5OsDv3lIQnCR8LAoYoLj1cjSlBRwCo4ACzZQ'
         );
 
-        // State
-        let sales = JSON.parse(localStorage.getItem('sales') || '[]');
-        let chartView = 'weekly';
-        let chart = null;
-        let allCalls = [];
+        let currentBooking = null;
+        let allBookings = [];
+        let salesChart = null;
+        let conversionChart = null;
 
         // Tab switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-
-            if (tabName === 'calls') loadCalls();
-            if (tabName === 'stats') updateStats();
-        }
-
-        // Dashboard functions
-        function updateDashboard() {
-            const emailsPerDay = parseInt(document.getElementById('emailsPerDay').value) || 250;
-            const daysToSale = (500 / emailsPerDay).toFixed(1);
-            document.getElementById('daysToSale').textContent = daysToSale;
-            
-            updateRevenue();
-            updateChart();
-        }
-
-        function addSale() {
-            const sale = {
-                date: new Date().toISOString().split('T')[0],
-                amount: 2500
-            };
-            sales.push(sale);
-            localStorage.setItem('sales', JSON.stringify(sales));
-            updateDashboard();
-        }
-
-        function undoSale() {
-            if (sales.length > 0) {
-                sales.pop();
-                localStorage.setItem('sales', JSON.stringify(sales));
-                updateDashboard();
-            }
-        }
-
-        function updateRevenue() {
-            const total = sales.reduce((sum, s) => sum + s.amount, 0);
-            document.getElementById('totalRevenue').textContent = '$' + total.toLocaleString();
-        }
-
-        function setChartView(view) {
-            chartView = view;
-            document.getElementById('weeklyBtn').classList.toggle('active', view === 'weekly');
-            document.getElementById('monthlyBtn').classList.toggle('active', view === 'monthly');
-            updateChart();
-        }
-
-        function updateChart() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            
-            // Prepare data based on view
-            let labels = [];
-            let data = [];
-            
-            if (chartView === 'weekly') {
-                // Last 7 days
-                for (let i = 6; i >= 0; i--) {
-                    const date = new Date();
-                    date.setDate(date.getDate() - i);
-                    const dateStr = date.toISOString().split('T')[0];
-                    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                    
-                    labels.push(dayName);
-                    const daySales = sales.filter(s => s.date === dateStr);
-                    const dayTotal = daySales.reduce((sum, s) => sum + s.amount, 0);
-                    data.push(dayTotal);
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const tabName = tab.dataset.tab;
+                document.getElementById(`${tabName}-content`).classList.add('active');
+                
+                if (tabName === 'stats') {
+                    updateCharts();
                 }
+            });
+        });
+
+        // Load bookings
+        async function loadBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            const { data, error } = await supabaseClient
+                .from('bookings')
+                .select('*')
+                .gte('scheduled_date', today)
+                .order('scheduled_date')
+                .order('scheduled_time');
+
+            if (error) {
+                console.error('Error loading bookings:', error);
+                return;
+            }
+
+            allBookings = data || [];
+            displayBookings();
+            updateStats();
+        }
+
+        function displayBookings() {
+            const callsList = document.getElementById('callsList');
+            
+            if (allBookings.length === 0) {
+                callsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>No upcoming calls scheduled</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            
+            callsList.innerHTML = allBookings.map(booking => {
+                const date = new Date(booking.scheduled_date + 'T00:00:00');
+                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                const isToday = booking.scheduled_date === today;
+                
+                return `
+                    <div class="call-card" onclick="openCallModal('${booking.id}')">
+                        <div class="call-card-header">
+                            <div>
+                                <div class="call-time">${booking.scheduled_time}</div>
+                                <div class="call-date">${dateStr}</div>
+                            </div>
+                            <span class="call-badge ${isToday ? 'badge-today' : 'badge-upcoming'}">
+                                ${isToday ? 'TODAY' : 'UPCOMING'}
+                            </span>
+                        </div>
+                        <div class="call-info">
+                            <div class="call-info-item">
+                                <span class="call-info-label">Company:</span>
+                                ${booking.company_name}
+                            </div>
+                            <div class="call-info-item">
+                                <span class="call-info-label">Phone:</span>
+                                ${booking.phone}
+                            </div>
+                            ${booking.website ? `
+                                <div class="call-info-item">
+                                    <span class="call-info-label">Website:</span>
+                                    ${booking.website}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openCallModal(bookingId) {
+            currentBooking = allBookings.find(b => b.id === bookingId);
+            if (!currentBooking) return;
+
+            const date = new Date(currentBooking.scheduled_date + 'T00:00:00');
+            const dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+            document.getElementById('modalCompany').textContent = currentBooking.company_name;
+            document.getElementById('modalDateTime').textContent = `${dateStr} at ${currentBooking.scheduled_time}`;
+            document.getElementById('modalEmail').textContent = currentBooking.email;
+            document.getElementById('modalPhone').textContent = currentBooking.phone;
+            
+            if (currentBooking.website) {
+                document.getElementById('modalWebsite').textContent = currentBooking.website;
+                document.getElementById('modalWebsiteContainer').style.display = 'flex';
             } else {
-                // Last 30 days
-                for (let i = 29; i >= 0; i--) {
-                    const date = new Date();
-                    date.setDate(date.getDate() - i);
-                    const dateStr = date.toISOString().split('T')[0];
-                    const dayLabel = date.getDate();
-                    
-                    labels.push(dayLabel);
-                    const daySales = sales.filter(s => s.date === dateStr);
-                    const dayTotal = daySales.reduce((sum, s) => sum + s.amount, 0);
-                    data.push(dayTotal);
-                }
+                document.getElementById('modalWebsiteContainer').style.display = 'none';
             }
 
-            if (chart) chart.destroy();
+            document.getElementById('callModal').classList.add('show');
+        }
 
-            chart = new Chart(ctx, {
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('callModal').classList.remove('show');
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('callModal')) {
+                document.getElementById('callModal').classList.remove('show');
+            }
+        });
+
+        document.getElementById('markSaleBtn').addEventListener('click', async () => {
+            if (!currentBooking) return;
+
+            const { error } = await supabaseClient
+                .from('bookings')
+                .update({ 
+                    sale_made: true,
+                    revenue: 2500,
+                    call_completed: true
+                })
+                .eq('id', currentBooking.id);
+
+            if (!error) {
+                document.getElementById('callModal').classList.remove('show');
+                loadBookings();
+            }
+        });
+
+        document.getElementById('markNoSaleBtn').addEventListener('click', async () => {
+            if (!currentBooking) return;
+
+            const { error } = await supabaseClient
+                .from('bookings')
+                .update({ 
+                    sale_made: false,
+                    call_completed: true
+                })
+                .eq('id', currentBooking.id);
+
+            if (!error) {
+                document.getElementById('callModal').classList.remove('show');
+                loadBookings();
+            }
+        });
+
+        async function updateStats() {
+            const { data, error } = await supabaseClient
+                .from('bookings')
+                .select('*')
+                .eq('call_completed', true);
+
+            const completedCalls = data || [];
+            const totalCalls = completedCalls.length;
+            const sales = completedCalls.filter(b => b.sale_made);
+            const totalSales = sales.length;
+            const totalRevenue = sales.reduce((sum, b) => sum + (b.revenue || 2500), 0);
+            const closeRate = totalCalls > 0 ? ((totalSales / totalCalls) * 100).toFixed(1) : 0;
+
+            document.getElementById('totalCalls').textContent = totalCalls;
+            document.getElementById('totalSales').textContent = totalSales;
+            document.getElementById('salesRevenue').textContent = `$${totalRevenue.toLocaleString()} revenue`;
+            document.getElementById('closeRate').textContent = `${closeRate}%`;
+            document.getElementById('closeRateDesc').textContent = `${totalSales} of ${totalCalls} calls`;
+            document.getElementById('avgRevenue').textContent = `$${totalSales > 0 ? Math.round(totalRevenue / totalSales).toLocaleString() : '2,500'}`;
+
+            document.getElementById('headerCloseRate').textContent = `${closeRate}%`;
+            document.getElementById('headerRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
+        }
+
+        function updateCharts() {
+            // Destroy old charts
+            if (salesChart) salesChart.destroy();
+            if (conversionChart) conversionChart.destroy();
+
+            // Sales over time chart
+            const ctx1 = document.getElementById('salesChart').getContext('2d');
+            salesChart = new Chart(ctx1, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                     datasets: [{
-                        label: 'Revenue',
-                        data: data,
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        label: 'Sales',
+                        data: [0, 0, 0, 0], // Will be updated with real data
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         tension: 0.4,
-                        fill: true,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
+                        fill: true
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
                     plugins: {
-                        legend: { display: false }
+                        legend: {
+                            display: false
+                        }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: {
-                                callback: value => '$' + value.toLocaleString()
-                            }
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        }
+                    }
+                }
+            });
+
+            // Conversion chart
+            const ctx2 = document.getElementById('conversionChart').getContext('2d');
+            conversionChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sales', 'No Sale'],
+                    datasets: [{
+                        data: [0, 0], // Will be updated
+                        backgroundColor: ['#10b981', '#334155']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#94a3b8' }
                         }
                     }
                 }
             });
         }
 
-        // Calls functions
-        async function loadCalls() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('bookings')
-                    .select('*')
-                    .gte('scheduled_date', new Date().toISOString().split('T')[0])
-                    .order('scheduled_date')
-                    .order('scheduled_time');
+        // Calculator
+        document.getElementById('emailsPerDay').addEventListener('input', (e) => {
+            const emailsPerDay = parseInt(e.target.value) || 0;
+            const daysPerSale = Math.ceil(700 / emailsPerDay);
+            const salesPerMonth = emailsPerDay > 0 ? (30 / daysPerSale).toFixed(1) : 0;
+            const salesPerMonthNum = parseFloat(salesPerMonth);
+            const revenuePerMonth = salesPerMonthNum * 2500;
+            const revenuePerYear = revenuePerMonth * 12;
 
-                if (error) throw error;
+            document.getElementById('daysPerSale').textContent = daysPerSale;
+            document.getElementById('salesPerMonth').textContent = `~${salesPerMonth} sales/month`;
+            document.getElementById('projSalesMonth').textContent = salesPerMonth;
+            document.getElementById('projRevenueMonth').textContent = `$${Math.round(revenuePerMonth).toLocaleString()}`;
+            document.getElementById('projRevenueYear').textContent = `$${Math.round(revenuePerYear).toLocaleString()}`;
+        });
 
-                allCalls = data || [];
-                renderCalls();
-            } catch (err) {
-                console.error('Error loading calls:', err);
-                document.getElementById('callsContainer').innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">❌</div>
-                        <div>Error loading calls</div>
-                    </div>
-                `;
-            }
-        }
+        // Trigger initial calculation
+        document.getElementById('emailsPerDay').dispatchEvent(new Event('input'));
 
-        function renderCalls() {
-            const today = new Date().toISOString().split('T')[0];
-            const todayCalls = allCalls.filter(c => c.scheduled_date === today);
-            const upcomingCalls = allCalls.filter(c => c.scheduled_date > today);
-
-            let html = '';
-
-            if (todayCalls.length > 0) {
-                html += '<div class="section-header">Today</div>';
-                todayCalls.forEach(call => {
-                    html += renderCallCard(call, true);
-                });
-            }
-
-            if (upcomingCalls.length > 0) {
-                html += '<div class="section-header">Upcoming</div>';
-                upcomingCalls.forEach(call => {
-                    html += renderCallCard(call, false);
-                });
-            }
-
-            if (allCalls.length === 0) {
-                html = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📅</div>
-                        <div>No upcoming calls</div>
-                    </div>
-                `;
-            }
-
-            document.getElementById('callsContainer').innerHTML = html;
-        }
-
-        function renderCallCard(call, isToday) {
-            const called = localStorage.getItem('called_' + call.id) === 'true';
-            return `
-                <div class="call-card ${isToday ? 'today' : ''}">
-                    <div class="time">${call.scheduled_time}</div>
-                    <div class="company">${call.company_name}</div>
-                    <div class="phone">${call.phone}</div>
-                    <div class="actions">
-                        <button class="btn-call" onclick="makeCall('${call.phone}')">📞 Call</button>
-                        <button class="btn-mark ${called ? 'called' : ''}" onclick="toggleCalled('${call.id}')">
-                            ${called ? '✓ Called' : 'Mark Called'}
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function makeCall(phone) {
-            window.location.href = 'tel:' + phone;
-        }
-
-        function toggleCalled(id) {
-            const currentState = localStorage.getItem('called_' + id) === 'true';
-            localStorage.setItem('called_' + id, !currentState);
-            renderCalls();
-            updateStats();
-        }
-
-        // Stats functions
-        async function updateStats() {
-            const callsBooked = allCalls.length;
-            const callsTaken = allCalls.filter(c => localStorage.getItem('called_' + c.id) === 'true').length;
-            const totalSales = sales.length;
-            const revenue = sales.reduce((sum, s) => sum + s.amount, 0);
-            const salesRate = callsTaken > 0 ? ((totalSales / callsTaken) * 100).toFixed(1) : 0;
-            const avgPerCall = callsTaken > 0 ? (revenue / callsTaken).toFixed(0) : 0;
-
-            document.getElementById('callsBooked').textContent = callsBooked;
-            document.getElementById('callsTaken').textContent = callsTaken;
-            document.getElementById('totalSales').textContent = totalSales;
-            document.getElementById('statsRevenue').textContent = '$' + revenue.toLocaleString();
-            document.getElementById('salesRate').textContent = salesRate + '%';
-            document.getElementById('avgPerCall').textContent = '$' + parseInt(avgPerCall).toLocaleString();
-        }
-
-        // Initialize
-        updateDashboard();
-        loadCalls();
+        // Initial load
+        loadBookings();
+        setInterval(loadBookings, 30000); // Refresh every 30 seconds
     </script>
 </body>
 </html>
