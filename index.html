@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - webre.co</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -77,7 +76,8 @@
         }
 
         .tabs {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 0.5rem;
             margin-bottom: 2rem;
             background: #1e293b;
@@ -86,7 +86,6 @@
         }
 
         .tab {
-            flex: 1;
             padding: 0.75rem 1rem;
             background: transparent;
             border: none;
@@ -112,91 +111,170 @@
         }
 
         /* Calls Tab */
-        .upcoming-calls {
-            margin-bottom: 2rem;
-        }
-
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .section-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #f1f5f9;
         }
 
         .call-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .call-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
         }
 
         .call-card:hover {
             border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
         }
 
         .call-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #334155;
         }
 
         .call-time {
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
             color: #3b82f6;
+            margin-bottom: 0.25rem;
         }
 
         .call-date {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #94a3b8;
-            margin-top: 0.25rem;
         }
 
         .call-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .badge-upcoming {
-            background: #1e40af;
-            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid #3b82f6;
         }
 
         .badge-today {
-            background: #166534;
-            color: #86efac;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid #10b981;
         }
 
         .call-info {
             display: grid;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
         }
 
-        .call-info-item {
+        .call-info-row {
             display: flex;
             align-items: center;
-            font-size: 0.9rem;
-            color: #cbd5e1;
+            gap: 0.75rem;
+        }
+
+        .call-info-icon {
+            width: 36px;
+            height: 36px;
+            background: #334155;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .call-info-content {
+            flex: 1;
         }
 
         .call-info-label {
+            font-size: 0.75rem;
             color: #64748b;
-            margin-right: 0.5rem;
-            min-width: 70px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .call-info-value {
+            font-size: 1rem;
+            color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .call-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn-call {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-call:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-details {
+            background: #334155;
+            color: #cbd5e1;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-details:hover {
+            background: #475569;
         }
 
         /* Modal */
@@ -209,13 +287,13 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            animation: fadeIn 0.3s;
         }
 
         .modal.show {
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s;
         }
 
         @keyframes fadeIn {
@@ -224,9 +302,9 @@
         }
 
         .modal-content {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 16px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
             max-height: 90vh;
@@ -247,12 +325,15 @@
 
         .modal-header {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            padding: 1.5rem;
-            border-radius: 16px 16px 0 0;
+            padding: 2rem;
+            border-radius: 18px 18px 0 0;
+            position: relative;
         }
 
         .modal-close {
-            float: right;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
             font-size: 1.75rem;
             font-weight: 700;
             color: #fff;
@@ -263,20 +344,19 @@
         }
 
         .modal-title {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 800;
             color: #fff;
-            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .modal-subtitle {
             color: #bfdbfe;
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
+            font-size: 0.95rem;
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .modal-section {
@@ -289,78 +369,56 @@
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .modal-info-grid {
             display: grid;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .modal-info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem;
             background: #0f172a;
-            border-radius: 8px;
+            border: 1px solid #334155;
+            padding: 1rem;
+            border-radius: 10px;
         }
 
         .modal-info-label {
             color: #64748b;
-            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
 
         .modal-info-value {
             color: #f1f5f9;
-            font-weight: 500;
-            text-align: right;
-        }
-
-        .modal-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        .btn {
-            padding: 0.85rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #10b981;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #059669;
-        }
-
-        .btn-secondary {
-            background: #334155;
-            color: #cbd5e1;
-        }
-
-        .btn-secondary:hover {
-            background: #475569;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
+            font-weight: 600;
+            font-size: 1rem;
         }
 
         /* Stats Tab */
+        .add-sale-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff;
+            border: none;
+            padding: 1.25rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+        }
+
+        .add-sale-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -369,10 +427,11 @@
         }
 
         .stat-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.25rem;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
         }
 
         .stat-label {
@@ -380,11 +439,11 @@
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: #3b82f6;
         }
@@ -392,61 +451,70 @@
         .stat-subtitle {
             font-size: 0.85rem;
             color: #64748b;
-            margin-top: 0.25rem;
+            margin-top: 0.5rem;
         }
 
-        .chart-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+        .close-rate-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
         }
 
-        .chart-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #f1f5f9;
-            margin-bottom: 1.5rem;
+        .close-rate-card .stat-label {
+            color: #bfdbfe;
+        }
+
+        .close-rate-card .stat-value {
+            color: #fff;
+            font-size: 4rem;
+        }
+
+        .close-rate-card .stat-subtitle {
+            color: #dbeafe;
         }
 
         /* Calculator Tab */
         .calculator-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 16px;
+            padding: 2rem;
             margin-bottom: 1.5rem;
         }
 
         .calculator-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #f1f5f9;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .calculator-subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
         }
 
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .input-label {
             font-size: 0.9rem;
             font-weight: 600;
             color: #cbd5e1;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             display: block;
         }
 
         .input {
             width: 100%;
-            padding: 0.85rem;
+            padding: 1rem;
             background: #0f172a;
             border: 2px solid #334155;
-            border-radius: 8px;
+            border-radius: 10px;
             color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
         }
 
         .input:focus {
@@ -456,37 +524,65 @@
 
         .result-card {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 2rem;
+            border-radius: 16px;
             text-align: center;
         }
 
         .result-label {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #bfdbfe;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .result-value {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: 800;
             color: #fff;
         }
 
         .result-subtitle {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             color: #dbeafe;
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .projection-grid {
+            background: #0f172a;
+            border: 1px solid #334155;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .projection-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .projection-row:last-child {
+            border-bottom: none;
+        }
+
+        .projection-label {
+            color: #94a3b8;
+        }
+
+        .projection-value {
+            font-weight: 700;
+            font-size: 1.1rem;
         }
 
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 4rem 1rem;
             color: #64748b;
         }
 
         .empty-state-icon {
-            font-size: 3rem;
+            font-size: 4rem;
             margin-bottom: 1rem;
         }
 
@@ -499,7 +595,7 @@
                 grid-template-columns: 1fr;
             }
 
-            .modal-actions {
+            .call-actions {
                 grid-template-columns: 1fr;
             }
         }
@@ -511,8 +607,8 @@
             <div class="logo">webre.co</div>
             <div class="header-stats">
                 <div class="header-stat">
-                    <div class="header-stat-label">Close Rate</div>
-                    <div class="header-stat-value" id="headerCloseRate">0%</div>
+                    <div class="header-stat-label">Total Calls</div>
+                    <div class="header-stat-value" id="headerCalls">0</div>
                 </div>
                 <div class="header-stat">
                     <div class="header-stat-label">Revenue</div>
@@ -539,35 +635,27 @@
 
         <!-- Stats Tab -->
         <div class="tab-content" id="stats-content">
+            <button class="add-sale-btn" id="addSaleBtn">+ Add Sale ($2,500)</button>
+
             <div class="stats-grid">
+                <div class="stat-card close-rate-card">
+                    <div class="stat-label">Close Rate</div>
+                    <div class="stat-value" id="closeRate">0%</div>
+                    <div class="stat-subtitle" id="closeRateDesc">0 sales / 0 calls</div>
+                </div>
                 <div class="stat-card">
                     <div class="stat-label">Total Calls</div>
                     <div class="stat-value" id="totalCalls">0</div>
+                    <div class="stat-subtitle">Up to today</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Total Sales</div>
                     <div class="stat-value" id="totalSales">0</div>
-                    <div class="stat-subtitle" id="salesRevenue">$0 revenue</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Close Rate</div>
-                    <div class="stat-value" id="closeRate">0%</div>
-                    <div class="stat-subtitle" id="closeRateDesc">0 of 0 calls</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="totalRevenue">$0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Avg Revenue/Sale</div>
-                    <div class="stat-value" id="avgRevenue">$2,500</div>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <h3 class="chart-title">Sales Over Time</h3>
-                <canvas id="salesChart"></canvas>
-            </div>
-
-            <div class="chart-card">
-                <h3 class="chart-title">Calls vs Sales</h3>
-                <canvas id="conversionChart"></canvas>
             </div>
         </div>
 
@@ -575,7 +663,7 @@
         <div class="tab-content" id="calculator-content">
             <div class="calculator-card">
                 <h2 class="calculator-title">Email Campaign Calculator</h2>
-                <p style="color: #94a3b8; margin-bottom: 2rem;">Based on 1 sale per 700 emails</p>
+                <p class="calculator-subtitle">Based on 1 sale per 700 emails</p>
 
                 <div class="input-group">
                     <label class="input-label">Emails Per Day</label>
@@ -587,23 +675,19 @@
                     <div class="result-value" id="daysPerSale">7</div>
                     <div class="result-subtitle" id="salesPerMonth">~4.3 sales/month</div>
                 </div>
-            </div>
 
-            <div class="calculator-card">
-                <h2 class="calculator-title">Revenue Projections</h2>
-                
-                <div style="background: #0f172a; padding: 1.25rem; border-radius: 8px; margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                        <span style="color: #94a3b8;">Sales/Month:</span>
-                        <span style="color: #3b82f6; font-weight: 700;" id="projSalesMonth">0</span>
+                <div class="projection-grid">
+                    <div class="projection-row">
+                        <span class="projection-label">Sales/Month:</span>
+                        <span class="projection-value" style="color: #3b82f6;" id="projSalesMonth">0</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                        <span style="color: #94a3b8;">Revenue/Month:</span>
-                        <span style="color: #10b981; font-weight: 700; font-size: 1.25rem;" id="projRevenueMonth">$0</span>
+                    <div class="projection-row">
+                        <span class="projection-label">Revenue/Month:</span>
+                        <span class="projection-value" style="color: #10b981;" id="projRevenueMonth">$0</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span style="color: #94a3b8;">Revenue/Year:</span>
-                        <span style="color: #10b981; font-weight: 700; font-size: 1.25rem;" id="projRevenueYear">$0</span>
+                    <div class="projection-row">
+                        <span class="projection-label">Revenue/Year:</span>
+                        <span class="projection-value" style="color: #10b981; font-size: 1.25rem;" id="projRevenueYear">$0</span>
                     </div>
                 </div>
             </div>
@@ -623,23 +707,18 @@
                     <h4 class="modal-section-title">Contact Information</h4>
                     <div class="modal-info-grid">
                         <div class="modal-info-item">
-                            <span class="modal-info-label">Email:</span>
-                            <span class="modal-info-value" id="modalEmail"></span>
+                            <div class="modal-info-label">Email</div>
+                            <div class="modal-info-value" id="modalEmail"></div>
                         </div>
                         <div class="modal-info-item">
-                            <span class="modal-info-label">Phone:</span>
-                            <span class="modal-info-value" id="modalPhone"></span>
+                            <div class="modal-info-label">Phone</div>
+                            <div class="modal-info-value" id="modalPhone"></div>
                         </div>
                         <div class="modal-info-item" id="modalWebsiteContainer" style="display: none;">
-                            <span class="modal-info-label">Website:</span>
-                            <span class="modal-info-value" id="modalWebsite"></span>
+                            <div class="modal-info-label">Website</div>
+                            <div class="modal-info-value" id="modalWebsite"></div>
                         </div>
                     </div>
-                </div>
-
-                <div class="modal-actions">
-                    <button class="btn btn-primary" id="markSaleBtn">✓ Mark Sale ($2,500)</button>
-                    <button class="btn btn-secondary" id="markNoSaleBtn">✗ No Sale</button>
                 </div>
             </div>
         </div>
@@ -654,8 +733,7 @@
 
         let currentBooking = null;
         let allBookings = [];
-        let salesChart = null;
-        let conversionChart = null;
+        let totalSalesCount = 0;
 
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
@@ -668,7 +746,7 @@
                 document.getElementById(`${tabName}-content`).classList.add('active');
                 
                 if (tabName === 'stats') {
-                    updateCharts();
+                    updateStats();
                 }
             });
         });
@@ -684,14 +762,10 @@
                 .order('scheduled_date')
                 .order('scheduled_time');
 
-            if (error) {
-                console.error('Error loading bookings:', error);
-                return;
+            if (!error && data) {
+                allBookings = data;
+                displayBookings();
             }
-
-            allBookings = data || [];
-            displayBookings();
-            updateStats();
         }
 
         function displayBookings() {
@@ -701,7 +775,8 @@
                 callsList.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
-                        <p>No upcoming calls scheduled</p>
+                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">No upcoming calls</p>
+                        <p style="color: #475569;">New calls will appear here</p>
                     </div>
                 `;
                 return;
@@ -711,39 +786,67 @@
             
             callsList.innerHTML = allBookings.map(booking => {
                 const date = new Date(booking.scheduled_date + 'T00:00:00');
-                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                const dateStr = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
                 const isToday = booking.scheduled_date === today;
                 
                 return `
-                    <div class="call-card" onclick="openCallModal('${booking.id}')">
+                    <div class="call-card">
                         <div class="call-card-header">
                             <div>
                                 <div class="call-time">${booking.scheduled_time}</div>
                                 <div class="call-date">${dateStr}</div>
                             </div>
                             <span class="call-badge ${isToday ? 'badge-today' : 'badge-upcoming'}">
-                                ${isToday ? 'TODAY' : 'UPCOMING'}
+                                ${isToday ? '● TODAY' : 'UPCOMING'}
                             </span>
                         </div>
                         <div class="call-info">
-                            <div class="call-info-item">
-                                <span class="call-info-label">Company:</span>
-                                ${booking.company_name}
+                            <div class="call-info-row">
+                                <div class="call-info-icon">🏢</div>
+                                <div class="call-info-content">
+                                    <div class="call-info-label">Company</div>
+                                    <div class="call-info-value">${booking.company_name}</div>
+                                </div>
                             </div>
-                            <div class="call-info-item">
-                                <span class="call-info-label">Phone:</span>
-                                ${booking.phone}
+                            <div class="call-info-row">
+                                <div class="call-info-icon">📧</div>
+                                <div class="call-info-content">
+                                    <div class="call-info-label">Email</div>
+                                    <div class="call-info-value">${booking.email}</div>
+                                </div>
+                            </div>
+                            <div class="call-info-row">
+                                <div class="call-info-icon">📱</div>
+                                <div class="call-info-content">
+                                    <div class="call-info-label">Phone</div>
+                                    <div class="call-info-value">${booking.phone}</div>
+                                </div>
                             </div>
                             ${booking.website ? `
-                                <div class="call-info-item">
-                                    <span class="call-info-label">Website:</span>
-                                    ${booking.website}
+                                <div class="call-info-row">
+                                    <div class="call-info-icon">🌐</div>
+                                    <div class="call-info-content">
+                                        <div class="call-info-label">Website</div>
+                                        <div class="call-info-value">${booking.website}</div>
+                                    </div>
                                 </div>
                             ` : ''}
+                        </div>
+                        <div class="call-actions">
+                            <button class="btn-call" onclick="callNow('${booking.phone}')">
+                                📞 Call Now
+                            </button>
+                            <button class="btn-details" onclick="openCallModal('${booking.id}')">
+                                📋 Details
+                            </button>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function callNow(phone) {
+            window.location.href = `tel:${phone}`;
         }
 
         function openCallModal(bookingId) {
@@ -760,7 +863,7 @@
             
             if (currentBooking.website) {
                 document.getElementById('modalWebsite').textContent = currentBooking.website;
-                document.getElementById('modalWebsiteContainer').style.display = 'flex';
+                document.getElementById('modalWebsiteContainer').style.display = 'block';
             } else {
                 document.getElementById('modalWebsiteContainer').style.display = 'none';
             }
@@ -778,127 +881,41 @@
             }
         });
 
-        document.getElementById('markSaleBtn').addEventListener('click', async () => {
-            if (!currentBooking) return;
+        // Add sale button
+        document.getElementById('addSaleBtn').addEventListener('click', async () => {
+            const confirmed = confirm('Add a sale for $2,500?');
+            if (!confirmed) return;
 
-            const { error } = await supabaseClient
-                .from('bookings')
-                .update({ 
-                    sale_made: true,
-                    revenue: 2500,
-                    call_completed: true
-                })
-                .eq('id', currentBooking.id);
+            // Get current sales count from localStorage
+            let sales = parseInt(localStorage.getItem('webre_sales') || '0');
+            sales++;
+            localStorage.setItem('webre_sales', sales.toString());
 
-            if (!error) {
-                document.getElementById('callModal').classList.remove('show');
-                loadBookings();
-            }
-        });
-
-        document.getElementById('markNoSaleBtn').addEventListener('click', async () => {
-            if (!currentBooking) return;
-
-            const { error } = await supabaseClient
-                .from('bookings')
-                .update({ 
-                    sale_made: false,
-                    call_completed: true
-                })
-                .eq('id', currentBooking.id);
-
-            if (!error) {
-                document.getElementById('callModal').classList.remove('show');
-                loadBookings();
-            }
+            updateStats();
         });
 
         async function updateStats() {
+            // Get total calls up to today
+            const today = new Date().toISOString().split('T')[0];
+            
             const { data, error } = await supabaseClient
                 .from('bookings')
                 .select('*')
-                .eq('call_completed', true);
+                .lte('scheduled_date', today);
 
-            const completedCalls = data || [];
-            const totalCalls = completedCalls.length;
-            const sales = completedCalls.filter(b => b.sale_made);
-            const totalSales = sales.length;
-            const totalRevenue = sales.reduce((sum, b) => sum + (b.revenue || 2500), 0);
+            const totalCalls = (data || []).length;
+            const totalSales = parseInt(localStorage.getItem('webre_sales') || '0');
+            const totalRevenue = totalSales * 2500;
             const closeRate = totalCalls > 0 ? ((totalSales / totalCalls) * 100).toFixed(1) : 0;
 
             document.getElementById('totalCalls').textContent = totalCalls;
             document.getElementById('totalSales').textContent = totalSales;
-            document.getElementById('salesRevenue').textContent = `$${totalRevenue.toLocaleString()} revenue`;
+            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
             document.getElementById('closeRate').textContent = `${closeRate}%`;
-            document.getElementById('closeRateDesc').textContent = `${totalSales} of ${totalCalls} calls`;
-            document.getElementById('avgRevenue').textContent = `$${totalSales > 0 ? Math.round(totalRevenue / totalSales).toLocaleString() : '2,500'}`;
+            document.getElementById('closeRateDesc').textContent = `${totalSales} sales / ${totalCalls} calls`;
 
-            document.getElementById('headerCloseRate').textContent = `${closeRate}%`;
+            document.getElementById('headerCalls').textContent = totalCalls;
             document.getElementById('headerRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
-        }
-
-        function updateCharts() {
-            // Destroy old charts
-            if (salesChart) salesChart.destroy();
-            if (conversionChart) conversionChart.destroy();
-
-            // Sales over time chart
-            const ctx1 = document.getElementById('salesChart').getContext('2d');
-            salesChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                    datasets: [{
-                        label: 'Sales',
-                        data: [0, 0, 0, 0], // Will be updated with real data
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#334155' }
-                        },
-                        x: {
-                            ticks: { color: '#94a3b8' },
-                            grid: { color: '#334155' }
-                        }
-                    }
-                }
-            });
-
-            // Conversion chart
-            const ctx2 = document.getElementById('conversionChart').getContext('2d');
-            conversionChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Sales', 'No Sale'],
-                    datasets: [{
-                        data: [0, 0], // Will be updated
-                        backgroundColor: ['#10b981', '#334155']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#94a3b8' }
-                        }
-                    }
-                }
-            });
         }
 
         // Calculator
@@ -922,6 +939,7 @@
 
         // Initial load
         loadBookings();
+        updateStats();
         setInterval(loadBookings, 30000); // Refresh every 30 seconds
     </script>
 </body>
