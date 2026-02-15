@@ -601,6 +601,18 @@
                 grid-template-columns: 1fr;
             }
 
+            .close-rate-card > div {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+
+            .close-rate-card > div > div:first-child {
+                border-right: none !important;
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+                padding-right: 0 !important;
+                padding-bottom: 1.5rem !important;
+            }
+
             .call-actions {
                 grid-template-columns: 1fr;
             }
@@ -647,10 +659,19 @@
             </div>
 
             <div class="stats-grid">
-                <div class="stat-card close-rate-card">
-                    <div class="stat-label">Close Rate</div>
-                    <div class="stat-value" id="closeRate">0%</div>
-                    <div class="stat-subtitle" id="closeRateDesc">0 sales / 0 calls</div>
+                <div class="stat-card close-rate-card" style="grid-column: 1 / -1;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+                        <div style="border-right: 1px solid rgba(255,255,255,0.2); padding-right: 2rem;">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value" id="totalRevenue" style="font-size: 3.5rem;">$0</div>
+                            <div class="stat-subtitle" id="revenueSubtitle">0 sales × $2,500</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Close Rate</div>
+                            <div class="stat-value" id="closeRate" style="font-size: 3.5rem;">0%</div>
+                            <div class="stat-subtitle" id="closeRateDesc">0 sales / 0 calls</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Total Calls</div>
@@ -660,10 +681,6 @@
                 <div class="stat-card">
                     <div class="stat-label">Total Sales</div>
                     <div class="stat-value" id="totalSales">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value" id="totalRevenue">$0</div>
                 </div>
             </div>
         </div>
@@ -715,7 +732,7 @@
                 <div class="modal-section">
                     <h4 class="modal-section-title">Contact Information</h4>
                     <div class="modal-info-grid">
-                        <a href="mailto:" id="modalEmailLink" style="text-decoration: none;">
+                        <a href="/cdn-cgi/l/email-protection#b3" id="modalEmailLink" style="text-decoration: none;">
                             <div class="modal-info-item" style="cursor: pointer; transition: all 0.2s;">
                                 <div class="modal-info-label">Email</div>
                                 <div class="modal-info-value" id="modalEmail" style="color: #3b82f6;"></div>
@@ -739,7 +756,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         const { createClient } = supabase;
         const supabaseClient = createClient(
             'https://nhvmmhxvktmelhquckia.supabase.co',
@@ -981,6 +998,7 @@
             document.getElementById('totalCalls').textContent = totalCalls;
             document.getElementById('totalSales').textContent = totalSales;
             document.getElementById('totalRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
+            document.getElementById('revenueSubtitle').textContent = `${totalSales} sales × $2,500`;
             document.getElementById('closeRate').textContent = `${closeRate}%`;
             document.getElementById('closeRateDesc').textContent = `${totalSales} sales / ${totalCalls} calls`;
 
@@ -989,7 +1007,7 @@
         }
 
         // Calculator
-        document.getElementById('emailsPerDay').addEventListener('input', (e) => {
+        document.getElementById('emailsPerDay').addEventListener('input', async (e) => {
             const emailsPerDay = parseInt(e.target.value) || 0;
             const daysPerSale = Math.ceil(700 / emailsPerDay);
             const salesPerMonth = emailsPerDay > 0 ? (30 / daysPerSale).toFixed(1) : 0;
@@ -1002,14 +1020,37 @@
             document.getElementById('projSalesMonth').textContent = salesPerMonth;
             document.getElementById('projRevenueMonth').textContent = `$${Math.round(revenuePerMonth).toLocaleString()}`;
             document.getElementById('projRevenueYear').textContent = `$${Math.round(revenuePerYear).toLocaleString()}`;
+
+            // Save to database
+            if (emailsPerDay > 0) {
+                await supabaseClient
+                    .from('settings')
+                    .upsert([{
+                        key: 'emails_per_day',
+                        value: emailsPerDay
+                    }], { onConflict: 'key' });
+            }
         });
 
-        // Trigger initial calculation
-        document.getElementById('emailsPerDay').dispatchEvent(new Event('input'));
+        // Load saved emails per day
+        async function loadSettings() {
+            const { data, error } = await supabaseClient
+                .from('settings')
+                .select('*')
+                .eq('key', 'emails_per_day')
+                .single();
+
+            if (!error && data) {
+                document.getElementById('emailsPerDay').value = data.value;
+            }
+            // Always trigger calculation
+            document.getElementById('emailsPerDay').dispatchEvent(new Event('input'));
+        }
 
         // Initial load
         loadBookings();
         updateStats();
+        loadSettings();
         setInterval(loadBookings, 30000); // Refresh every 30 seconds
     </script>
 </body>
