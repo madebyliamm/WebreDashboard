@@ -399,7 +399,7 @@
         }
 
         .modal-info-value {
-            color: #f1f5f9;
+            color: #ffffff;
             font-weight: 600;
             font-size: 1rem;
         }
@@ -704,6 +704,10 @@
 
                 <div class="projection-grid">
                     <div class="projection-row">
+                        <span class="projection-label">Calls/Month:</span>
+                        <span class="projection-value" style="color: #f59e0b;" id="projCallsMonth">0</span>
+                    </div>
+                    <div class="projection-row">
                         <span class="projection-label">Sales/Month:</span>
                         <span class="projection-value" style="color: #3b82f6;" id="projSalesMonth">0</span>
                     </div>
@@ -875,7 +879,20 @@
         }
 
         function callNow(phone) {
-            window.location.href = `tel:${phone}`;
+            // Copy to clipboard
+            navigator.clipboard.writeText(phone).then(() => {
+                // Show brief feedback
+                const btn = event.target.closest('.btn-call');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✓ Number Copied!';
+                btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 1500);
+            }).catch(() => {
+                // Fallback: try tel: link anyway
+                window.location.href = `tel:${phone}`;
+            });
         }
 
         function openCallModal(bookingId) {
@@ -986,6 +1003,9 @@
             const totalRevenue = totalSales * 2500;
             const closeRate = totalCalls > 0 ? ((totalSales / totalCalls) * 100).toFixed(1) : 0;
 
+            // Update global close rate for calculator
+            currentCloseRate = parseFloat(closeRate);
+
             document.getElementById('totalCalls').textContent = totalCalls;
             document.getElementById('totalSales').textContent = totalSales;
             document.getElementById('totalRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
@@ -995,9 +1015,14 @@
 
             document.getElementById('headerCalls').textContent = totalCalls;
             document.getElementById('headerRevenue').textContent = `$${totalRevenue.toLocaleString()}`;
+
+            // Recalculate calls/month in calculator
+            document.getElementById('emailsPerDay').dispatchEvent(new Event('input'));
         }
 
         // Calculator
+        let currentCloseRate = 0;
+
         document.getElementById('emailsPerDay').addEventListener('input', async (e) => {
             const emailsPerDay = parseInt(e.target.value) || 0;
             const daysPerSale = Math.ceil(700 / emailsPerDay);
@@ -1006,8 +1031,14 @@
             const revenuePerMonth = salesPerMonthNum * 2500;
             const revenuePerYear = revenuePerMonth * 12;
 
+            // Calculate calls per month based on close rate
+            // If close rate is 0, assume 1 call per sale as placeholder
+            const callsPerSale = currentCloseRate > 0 ? (100 / currentCloseRate) : 1;
+            const callsPerMonth = (salesPerMonthNum * callsPerSale).toFixed(1);
+
             document.getElementById('daysPerSale').textContent = daysPerSale;
             document.getElementById('salesPerMonth').textContent = `~${salesPerMonth} sales/month`;
+            document.getElementById('projCallsMonth').textContent = callsPerMonth;
             document.getElementById('projSalesMonth').textContent = salesPerMonth;
             document.getElementById('projRevenueMonth').textContent = `$${Math.round(revenuePerMonth).toLocaleString()}`;
             document.getElementById('projRevenueYear').textContent = `$${Math.round(revenuePerYear).toLocaleString()}`;
