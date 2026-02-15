@@ -923,9 +923,6 @@
 
         // Add sale button
         document.getElementById('addSaleBtn').addEventListener('click', async () => {
-            const confirmed = confirm('Add a sale for $2,500?');
-            if (!confirmed) return;
-
             // Save sale to database
             const { error } = await supabaseClient
                 .from('sales')
@@ -936,7 +933,6 @@
 
             if (error) {
                 console.error('Error adding sale:', error);
-                alert('Error adding sale. Please try again.');
                 return;
             }
 
@@ -945,9 +941,6 @@
 
         // Undo sale button
         document.getElementById('undoSaleBtn').addEventListener('click', async () => {
-            const confirmed = confirm('Remove the most recent sale?');
-            if (!confirmed) return;
-
             // Get most recent sale
             const { data, error: fetchError } = await supabaseClient
                 .from('sales')
@@ -956,7 +949,6 @@
                 .limit(1);
 
             if (fetchError || !data || data.length === 0) {
-                alert('No sales to undo.');
                 return;
             }
 
@@ -968,7 +960,6 @@
 
             if (deleteError) {
                 console.error('Error undoing sale:', deleteError);
-                alert('Error undoing sale. Please try again.');
                 return;
             }
 
