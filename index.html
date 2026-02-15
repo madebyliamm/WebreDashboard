@@ -133,6 +133,7 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .call-card::before {
@@ -236,7 +237,7 @@
 
         .call-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 0.75rem;
         }
 
@@ -382,6 +383,11 @@
             border: 1px solid #334155;
             padding: 1rem;
             border-radius: 10px;
+        }
+
+        .modal-info-item:hover {
+            border-color: #3b82f6;
+            background: #1e293b;
         }
 
         .modal-info-label {
@@ -635,7 +641,10 @@
 
         <!-- Stats Tab -->
         <div class="tab-content" id="stats-content">
-            <button class="add-sale-btn" id="addSaleBtn">+ Add Sale ($2,500)</button>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem; margin-bottom: 2rem;">
+                <button class="add-sale-btn" id="addSaleBtn">+ Add Sale ($2,500)</button>
+                <button class="add-sale-btn" id="undoSaleBtn" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3);">↩️ Undo</button>
+            </div>
 
             <div class="stats-grid">
                 <div class="stat-card close-rate-card">
@@ -706,18 +715,24 @@
                 <div class="modal-section">
                     <h4 class="modal-section-title">Contact Information</h4>
                     <div class="modal-info-grid">
-                        <div class="modal-info-item">
-                            <div class="modal-info-label">Email</div>
-                            <div class="modal-info-value" id="modalEmail"></div>
-                        </div>
-                        <div class="modal-info-item">
-                            <div class="modal-info-label">Phone</div>
-                            <div class="modal-info-value" id="modalPhone"></div>
-                        </div>
-                        <div class="modal-info-item" id="modalWebsiteContainer" style="display: none;">
-                            <div class="modal-info-label">Website</div>
-                            <div class="modal-info-value" id="modalWebsite"></div>
-                        </div>
+                        <a href="mailto:" id="modalEmailLink" style="text-decoration: none;">
+                            <div class="modal-info-item" style="cursor: pointer; transition: all 0.2s;">
+                                <div class="modal-info-label">Email</div>
+                                <div class="modal-info-value" id="modalEmail" style="color: #3b82f6;"></div>
+                            </div>
+                        </a>
+                        <a href="tel:" id="modalPhoneLink" style="text-decoration: none;">
+                            <div class="modal-info-item" style="cursor: pointer; transition: all 0.2s;">
+                                <div class="modal-info-label">Phone</div>
+                                <div class="modal-info-value" id="modalPhone" style="color: #10b981;"></div>
+                            </div>
+                        </a>
+                        <a href="" id="modalWebsiteLink" target="_blank" style="text-decoration: none; display: none;">
+                            <div class="modal-info-item" id="modalWebsiteContainer" style="cursor: pointer; transition: all 0.2s;">
+                                <div class="modal-info-label">Website</div>
+                                <div class="modal-info-value" id="modalWebsite" style="color: #f59e0b;"></div>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -790,7 +805,7 @@
                 const isToday = booking.scheduled_date === today;
                 
                 return `
-                    <div class="call-card">
+                    <div class="call-card" onclick="openCallModal('${booking.id}')">
                         <div class="call-card-header">
                             <div>
                                 <div class="call-time">${booking.scheduled_time}</div>
@@ -833,11 +848,8 @@
                             ` : ''}
                         </div>
                         <div class="call-actions">
-                            <button class="btn-call" onclick="callNow('${booking.phone}')">
+                            <button class="btn-call" onclick="event.stopPropagation(); callNow('${booking.phone}')">
                                 📞 Call Now
-                            </button>
-                            <button class="btn-details" onclick="openCallModal('${booking.id}')">
-                                📋 Details
                             </button>
                         </div>
                     </div>
@@ -858,14 +870,25 @@
 
             document.getElementById('modalCompany').textContent = currentBooking.company_name;
             document.getElementById('modalDateTime').textContent = `${dateStr} at ${currentBooking.scheduled_time}`;
-            document.getElementById('modalEmail').textContent = currentBooking.email;
-            document.getElementById('modalPhone').textContent = currentBooking.phone;
             
+            // Set email
+            document.getElementById('modalEmail').textContent = currentBooking.email;
+            document.getElementById('modalEmailLink').href = `mailto:${currentBooking.email}`;
+            
+            // Set phone
+            document.getElementById('modalPhone').textContent = currentBooking.phone;
+            document.getElementById('modalPhoneLink').href = `tel:${currentBooking.phone}`;
+            
+            // Set website
             if (currentBooking.website) {
+                const websiteUrl = currentBooking.website.startsWith('http') 
+                    ? currentBooking.website 
+                    : 'https://' + currentBooking.website;
                 document.getElementById('modalWebsite').textContent = currentBooking.website;
-                document.getElementById('modalWebsiteContainer').style.display = 'block';
+                document.getElementById('modalWebsiteLink').href = websiteUrl;
+                document.getElementById('modalWebsiteLink').style.display = 'block';
             } else {
-                document.getElementById('modalWebsiteContainer').style.display = 'none';
+                document.getElementById('modalWebsiteLink').style.display = 'none';
             }
 
             document.getElementById('callModal').classList.add('show');
@@ -886,25 +909,72 @@
             const confirmed = confirm('Add a sale for $2,500?');
             if (!confirmed) return;
 
-            // Get current sales count from localStorage
-            let sales = parseInt(localStorage.getItem('webre_sales') || '0');
-            sales++;
-            localStorage.setItem('webre_sales', sales.toString());
+            // Save sale to database
+            const { error } = await supabaseClient
+                .from('sales')
+                .insert([{
+                    amount: 2500,
+                    created_at: new Date().toISOString()
+                }]);
 
-            updateStats();
+            if (error) {
+                console.error('Error adding sale:', error);
+                alert('Error adding sale. Please try again.');
+                return;
+            }
+
+            await updateStats();
+        });
+
+        // Undo sale button
+        document.getElementById('undoSaleBtn').addEventListener('click', async () => {
+            const confirmed = confirm('Remove the most recent sale?');
+            if (!confirmed) return;
+
+            // Get most recent sale
+            const { data, error: fetchError } = await supabaseClient
+                .from('sales')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (fetchError || !data || data.length === 0) {
+                alert('No sales to undo.');
+                return;
+            }
+
+            // Delete most recent sale
+            const { error: deleteError } = await supabaseClient
+                .from('sales')
+                .delete()
+                .eq('id', data[0].id);
+
+            if (deleteError) {
+                console.error('Error undoing sale:', deleteError);
+                alert('Error undoing sale. Please try again.');
+                return;
+            }
+
+            await updateStats();
         });
 
         async function updateStats() {
             // Get total calls up to today
             const today = new Date().toISOString().split('T')[0];
             
-            const { data, error } = await supabaseClient
+            const { data: callsData, error: callsError } = await supabaseClient
                 .from('bookings')
                 .select('*')
                 .lte('scheduled_date', today);
 
-            const totalCalls = (data || []).length;
-            const totalSales = parseInt(localStorage.getItem('webre_sales') || '0');
+            const totalCalls = (callsData || []).length;
+
+            // Get total sales from database
+            const { data: salesData, error: salesError } = await supabaseClient
+                .from('sales')
+                .select('*');
+
+            const totalSales = (salesData || []).length;
             const totalRevenue = totalSales * 2500;
             const closeRate = totalCalls > 0 ? ((totalSales / totalCalls) * 100).toFixed(1) : 0;
 
