@@ -704,8 +704,8 @@
 
                 <div class="projection-grid">
                     <div class="projection-row">
-                        <span class="projection-label">Calls/Month:</span>
-                        <span class="projection-value" style="color: #f59e0b;" id="projCallsMonth">0</span>
+                        <span class="projection-label">Calls/Day:</span>
+                        <span class="projection-value" style="color: #f59e0b;" id="projCallsDay">0</span>
                     </div>
                     <div class="projection-row">
                         <span class="projection-label">Sales/Month:</span>
@@ -739,19 +739,19 @@
                         <a href="/cdn-cgi/l/email-protection#b3" id="modalEmailLink" style="text-decoration: none;">
                             <div class="modal-info-item" style="cursor: pointer; transition: all 0.2s;">
                                 <div class="modal-info-label">Email</div>
-                                <div class="modal-info-value" id="modalEmail" style="color: #3b82f6;"></div>
+                                <div class="modal-info-value" id="modalEmail"></div>
                             </div>
                         </a>
                         <a href="tel:" id="modalPhoneLink" style="text-decoration: none;">
                             <div class="modal-info-item" style="cursor: pointer; transition: all 0.2s;">
                                 <div class="modal-info-label">Phone</div>
-                                <div class="modal-info-value" id="modalPhone" style="color: #10b981;"></div>
+                                <div class="modal-info-value" id="modalPhone"></div>
                             </div>
                         </a>
                         <a href="" id="modalWebsiteLink" target="_blank" style="text-decoration: none; display: none;">
                             <div class="modal-info-item" id="modalWebsiteContainer" style="cursor: pointer; transition: all 0.2s;">
                                 <div class="modal-info-label">Website</div>
-                                <div class="modal-info-value" id="modalWebsite" style="color: #f59e0b;"></div>
+                                <div class="modal-info-value" id="modalWebsite"></div>
                             </div>
                         </a>
                     </div>
@@ -879,20 +879,7 @@
         }
 
         function callNow(phone) {
-            // Copy to clipboard
-            navigator.clipboard.writeText(phone).then(() => {
-                // Show brief feedback
-                const btn = event.target.closest('.btn-call');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '✓ Number Copied!';
-                btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 1500);
-            }).catch(() => {
-                // Fallback: try tel: link anyway
-                window.location.href = `tel:${phone}`;
-            });
+            window.location.href = `tel:${phone}`;
         }
 
         function openCallModal(bookingId) {
@@ -1025,20 +1012,20 @@
 
         document.getElementById('emailsPerDay').addEventListener('input', async (e) => {
             const emailsPerDay = parseInt(e.target.value) || 0;
-            const daysPerSale = Math.ceil(700 / emailsPerDay);
-            const salesPerMonth = emailsPerDay > 0 ? (30 / daysPerSale).toFixed(1) : 0;
+            const daysPerSale = emailsPerDay > 0 ? (700 / emailsPerDay).toFixed(1) : 0;
+            const salesPerMonth = emailsPerDay > 0 ? (30 / (700 / emailsPerDay)).toFixed(1) : 0;
             const salesPerMonthNum = parseFloat(salesPerMonth);
             const revenuePerMonth = salesPerMonthNum * 2500;
             const revenuePerYear = revenuePerMonth * 12;
 
-            // Calculate calls per month based on close rate
+            // Calculate calls per day based on close rate
             // If close rate is 0, assume 1 call per sale as placeholder
             const callsPerSale = currentCloseRate > 0 ? (100 / currentCloseRate) : 1;
-            const callsPerMonth = (salesPerMonthNum * callsPerSale).toFixed(1);
+            const callsPerDay = (salesPerMonthNum * callsPerSale / 30).toFixed(1);
 
             document.getElementById('daysPerSale').textContent = daysPerSale;
             document.getElementById('salesPerMonth').textContent = `~${salesPerMonth} sales/month`;
-            document.getElementById('projCallsMonth').textContent = callsPerMonth;
+            document.getElementById('projCallsDay').textContent = callsPerDay;
             document.getElementById('projSalesMonth').textContent = salesPerMonth;
             document.getElementById('projRevenueMonth').textContent = `$${Math.round(revenuePerMonth).toLocaleString()}`;
             document.getElementById('projRevenueYear').textContent = `$${Math.round(revenuePerYear).toLocaleString()}`;
